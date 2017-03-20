@@ -1,95 +1,46 @@
 
 public class LC020 {
-    private static class ListNode {
-        int val;
-        ListNode next;
-        
-        ListNode(int x) {
-            val = x;
-        }
-    }
-    
-    private static ListNode createList(int[] nums) {
-        if (nums == null || nums.length == 0) {
-            return null;
-        }
-        
-        ListNode root = new ListNode(nums[0]);
-        ListNode t = root;
-        for (int i = 1; i < nums.length; i++) {
-            t.next = new ListNode(nums[i]);
-            t = t.next;
-        }
-        return root;
-    }
-    
-    private static void printList(ListNode root) {
-        if (root == null) {
-            System.out.println("<empty>");
-        }
-        System.out.print(root.val);
-        while (root.next != null) {
-            System.out.print(" --> " + root.next.val);
-            root = root.next;
-        }
-        System.out.println();
-    }
     
     public static void main(String[] args) {
-        ListNode r1 = createList(new int[] { 1, 3, 5, 7 });
-        ListNode r2 = createList(new int[] { 2, 4, 6, 8 });
-        
-        printList(r1);
-        printList(r2);
-        
-        ListNode r3 = new LC020().mergeTwoLists(r1, r2);
-        printList(r3);
+        System.out.println(new LC020().isValid("(("));
     }
     
-    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-        if (l1 == null) {
-            return l2;
+    public boolean isValid(String s) {
+        if (s == null) {
+            throw new IllegalArgumentException("null input");
         }
-        if (l2 == null) {
-            return l1;
+        if (s.length() % 2 == 1) {
+            return false;
         }
+        char[] stack = new char[s.length() / 2];
+        int i = -1;
         
-        ListNode root;
-        
-        if (l1.val <= l2.val) {
-            root = l1;
-            l1 = l1.next;
-        } else {
-            root = l2;
-            l2 = l2.next;
-        }
-        
-        ListNode t = root;
-        
-        while (l1 != null && l2 != null) {
-            if (l1.val <= l2.val) {
-                t.next = l1;
-                t = t.next;
-                l1 = l1.next;
+        for (int j = 0; j < s.length(); j++) {
+            char c = s.charAt(j);
+            if (c == '(' || c == '{' || c == '[') {
+                if (i + 1 == stack.length) {
+                    return false;
+                }
+                stack[++i] = c;
             } else {
-                t.next = l2;
-                t = t.next;
-                l2 = l2.next;
+                if (i == -1) {
+                    return false;
+                }
+                char d = stack[i--];
+                boolean c1 = d == '(' && c == ')';
+                boolean c2 = d == '{' && c == '}';
+                boolean c3 = d == '[' && c == ']';
+                
+                if (!c1 && !c2 && !c3) {
+                    return false;
+                }
             }
         }
         
-        while (l1 != null) {
-            t.next = l1;
-            t = t.next;
-            l1 = l1.next;
+        if (i != -1) {
+            return false;
+        } else {
+            return true;
         }
-        
-        while (l2 != null) {
-            t.next = l2;
-            t = t.next;
-            l2 = l2.next;
-        }
-        
-        return root;
     }
 }
